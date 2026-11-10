@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "unito",
+  "productName": "bubble",
   "version": "0.1.0",
-  "identifier": "com.exz0.unito",
+  "identifier": "com.exz0.bubble",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,9 +12,15 @@
   "app": {
     "windows": [
       {
-        "title": "Unito",
-        "width": 860,
-        "height": 535
+        "label": "bubble",
+        "width": 400,
+        "height": 300,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "transparent": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "resizable": false
       }
     ],
     "security": {
