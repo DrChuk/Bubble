@@ -5,28 +5,36 @@
 
     const appWindow = getCurrentWindow();
 
-    const indicator = ref<HTMLSpanElement | null>(null);
     const bubble = ref<HTMLDivElement | null>(null);
+
+    const isHidden = ref(false);
 
     setInterval(async () => {
         const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
 
         const rect = bubble.value?.getBoundingClientRect();
+
+
         const isOverBubble = 
             mouseX >= Number(rect?.left) && mouseX <= Number(rect?.right) &&
-            mouseY >= Number(rect?.top) && mouseY <= Number(rect?.bottom);
+            mouseY >= 0 && mouseY <= (isHidden.value ? 1 : Number(rect?.bottom));
 
-        console.log('X: ' + mouseX + ', Y: ' + mouseY + ', isOver: ' + isOverBubble);
+        if (isOverBubble && isHidden.value) {
+            isHidden.value = false;
+            bubble.value?.classList.toggle('hidden', false);
+        } else if (!isOverBubble && !isHidden.value) {
+            isHidden.value = true;
+            bubble.value?.classList.toggle('hidden', true);
+        }
 
-        indicator.value?.classList.toggle('on', isOverBubble);
         await appWindow.setIgnoreCursorEvents(!isOverBubble);
     }, 50);
 </script>
 
 <template>
     <div class="center">
-        <div class="bubble" ref="bubble">
-            <span class="indicator" ref="indicator"></span>
+        <div class="bubble hidden" ref="bubble">
+            
         </div>
     </div>
 </template>
@@ -48,29 +56,11 @@
         pointer-events: none;
     }
 
-    .indicator {
-        position: relative;
-
-        width: 12px;
-        height: 12px;
-
-        margin-left: 12px;
-
-        border-radius: 12px;
-        background-color: #f44;
-
-        transition: background-color 0.2s ease-out;
-    }
-
-    .on {
-        background-color: #4f4;
-    }
-
     .bubble {
         display: flex;
         position: relative;
 
-        max-height: 64px;
+        max-height: 48px;
         width: 320px;
 
         margin-top: 8px;
@@ -81,6 +71,12 @@
         align-items: center;
 
         background-color: black;
+
+        transition: transform 0.3s cubic-bezier(.11,.58,.3,.99);
+    }
+
+    .hidden {
+        transform: translateY(-99.9%);
     }
 </style>
 
