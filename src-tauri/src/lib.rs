@@ -1,6 +1,7 @@
 use tauri::{Manager, WebviewWindow, Window};
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use tauri_plugin_positioner::{WindowExt, Position};
+use chrono::Local;
 
 #[tauri::command]
 fn get_mouse_pos(window: WebviewWindow) -> Result<(f64, f64), String> {
@@ -19,25 +20,45 @@ fn set_ignore_cursor_events(window: Window, ignore: bool) -> Result<(), String> 
     window.set_ignore_cursor_events(ignore).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn get_time() -> String {
+    let time = Local::now();
+    format!("{}", time.format("%H:%M"))
+}
+
+#[tauri::command]
+fn get_date() -> String {
+    let date = Local::now();
+    format!("{}", date.format("%a %d %b"))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| {
-            let window = app.get_webview_window("bubble").expect("Bubble not found!");
+            let window = app.get_webview_window("bubble").unwrap();
 
-            #[cfg(target_os = "windows")]
-            if let Err(e) = window.set_shadow(false) {
-                eprintln!("Failed to disable shadow: {e}");
-            }
+            let window_clone = window.clone();
+            tauri::async_runtime::spawn(async move {
+                #[cfg(target_os = "windows")]
+                if let Err(e) = window_clone.set_shadow(false) {
+                    eprintln!("Failed to disable shadow: {e}");
+                }
 
-            let _ = window.move_window(Position::TopCenter);
+                let _ = window_clone.move_window(Position::TopCenter);
+                let _ = window_clone.show();
+            });
 
-            let _ = window.show();
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_mouse_pos, set_ignore_cursor_events])
+        .invoke_handler(tauri::generate_handler![
+            get_mouse_pos,
+            set_ignore_cursor_events,
+            get_time,
+            get_date
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
