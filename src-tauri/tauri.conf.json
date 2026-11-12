@@ -12,9 +12,10 @@
   "app": {
     "windows": [
       {
+        "title": "bubble",
         "label": "bubble",
-        "width": 400,
-        "height": 300,
+        "width": 340,
+        "height": 60,
         "decorations": false,
         "alwaysOnTop": true,
         "transparent": true,
