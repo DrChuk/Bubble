@@ -1,7 +1,7 @@
 use tauri::{Manager, WebviewWindow, Window};
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use tauri_plugin_positioner::{WindowExt, Position};
 use chrono::Local;
+use tauri_plugin_positioner::{Position, WindowExt};
 
 #[tauri::command]
 fn get_mouse_pos(window: WebviewWindow) -> Result<(f64, f64), String> {
@@ -20,12 +20,19 @@ fn get_absolute_window_rect(window: WebviewWindow) -> Result<(i32, i32, i32, i32
     let window_position = window.inner_position().map_err(|e| e.to_string())?;
     let window_size = window.inner_size().map_err(|e| e.to_string())?;
 
-    Ok((window_position.x, window_position.y, window_position.x + window_size.width as i32, window_position.y + window_size.height as i32))
+    Ok((
+        window_position.x,
+        window_position.y,
+        window_position.x + window_size.width as i32,
+        window_position.y + window_size.height as i32,
+    ))
 }
 
 #[tauri::command]
 fn set_ignore_cursor_events(window: Window, ignore: bool) -> Result<(), String> {
-    window.set_ignore_cursor_events(ignore).map_err(|e| e.to_string())
+    window
+        .set_ignore_cursor_events(ignore)
+        .map_err(|e| e.to_string())
 }
 
 #[tauri::command]
@@ -43,8 +50,8 @@ fn get_date() -> String {
 #[tauri::command]
 #[cfg(target_os = "windows")]
 fn get_foreground_window_rect() -> Option<(i32, i32, i32, i32)> {
-    use windows::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowRect};
     use windows::Win32::Foundation::RECT;
+    use windows::Win32::UI::WindowsAndMessaging::{GetForegroundWindow, GetWindowRect};
 
     unsafe {
         let hwnd = GetForegroundWindow();
@@ -68,6 +75,7 @@ fn rects_intersect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> bool {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| {
             let window = app.get_webview_window("bubble").unwrap();
@@ -82,11 +90,10 @@ pub fn run() {
                 let _ = window_clone.move_window(Position::TopCenter);
                 let _ = window_clone.show();
 
-                if cfg!(debug_assertions) {
+                #[cfg(debug_assertions)] {
                     let _ = window_clone.open_devtools();
                 }
             });
-
 
             Ok(())
         })
