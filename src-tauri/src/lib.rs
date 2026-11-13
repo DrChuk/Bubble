@@ -1,5 +1,4 @@
 use tauri::{Manager, WebviewWindow, Window};
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use chrono::Local;
 use tauri_plugin_positioner::{Position, WindowExt};
 

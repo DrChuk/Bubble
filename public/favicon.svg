@@ -1,21 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Мягкий градиент для пузыря -->
     <radialGradient id="bubbleGrad" cx="40%" cy="35%" r="70%">
       <stop offset="0%" stop-color="#2e2e2e"/>
       <stop offset="100%" stop-color="#0d0d0d"/>
     </radialGradient>
   </defs>
 
-  <!-- Чёрный фон -->
   <rect width="512" height="512" rx="112" fill="#000000"/>
 
-  <!-- Пузырь с градиентом и аккуратной обводкой -->
   <circle cx="256" cy="256" r="140"
           fill="url(#bubbleGrad)"
           stroke="#ffffff"
           stroke-width="10"/>
 
-  <!-- Один мягкий блик -->
   <circle cx="205" cy="200" r="24" fill="#ffffff" fill-opacity="0.9"/>
 </svg>
