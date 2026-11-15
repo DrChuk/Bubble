@@ -29,14 +29,16 @@
 </script>
 
 <template>
-    <p class="time">{{ time }}</p>
-    <div class="date">
-        <p class="weekday">{{ weekday }}</p>
-        <span class="dot"></span>
-        <p class="day">{{ day }}</p>
-        <p class="month">{{ month }}</p>
+    <div class="container">
+        <p class="time">{{ time }}</p>
+        <div class="date">
+            <p class="weekday">{{ weekday }}</p>
+            <span class="dot"></span>
+            <p class="day">{{ day }}</p>
+            <p class="month">{{ month }}</p>
+        </div>
+        <div class="more"></div>
     </div>
-    <div class="more"></div>
 </template>
 
 <style scoped>

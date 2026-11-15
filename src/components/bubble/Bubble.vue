@@ -1,4 +1,6 @@
 <script setup lang="ts">
+    import { useBubbleState } from '../../composables/useBubbleState.ts';
+    import BubbleHidden from './BubbleHidden.vue';
     import BubbleMinimized from './BubbleMinimized.vue';
     import BubbleExpanded from './BubbleExpanded.vue';
     import { invoke } from '@tauri-apps/api/core';
@@ -8,16 +10,16 @@
 
     const appWindow = getCurrentWindow();
 
+    const { state } = useBubbleState();
+
     const bubble = ref<HTMLDivElement | null>(null); // A variable for Bubble element
-    const isHidden = ref(false); // A state to whether the Bubble is showed
     const isOtherWindowHover = ref(false); // A state to whether Bubble is overlapped with other window
     
     // A function for fast show/hide a bubble
-    async function setBubbleState(value: boolean) {
-        bubble.value?.classList.toggle('hidden', !value);
-        isHidden.value = !value;
-        await appWindow.setIgnoreCursorEvents(!value);
-    }
+    watch(state, async (newValue) => {
+        bubble.value?.classList.toggle('hidden', newValue === 'hidden');
+        await appWindow.setIgnoreCursorEvents(newValue === 'hidden');
+    });
 
     // A function for a cursor-following effect
     let bubbleMouseEffectId: number | null = null;
@@ -46,18 +48,18 @@
 
         const isOverBubble = 
             mouseX >= Number(bubbleRect?.left) && mouseX <= Number(bubbleRect?.right) &&
-            mouseY >= 0 && mouseY <= (isHidden.value ? 1 : Number(bubbleRect?.bottom));
+            mouseY >= 0 && mouseY <= (state.value === 'hidden' ? 1 : Number(bubbleRect?.bottom));
 
-        if (isOverBubble && isHidden.value) {
-            await setBubbleState(true);
-        } else if (!isOverBubble && !isHidden.value) {
-            await setBubbleState(false);
+        if (isOverBubble && state.value === 'hidden') {
+            state.value = 'minimized';
+        } else if (!isOverBubble && state.value !== 'hidden') {
+            state.value = 'hidden';
         }
     }
 
     // A function to check whether a Bubble is overlapped by window
     let bubbleOtherWindowCoverIntervalId: number | null = null;
-    async function BubbleOtherWindowCoverInterval() {
+    async function bubbleOtherWindowCoverInterval() {
         const windowRect = await invoke<[number, number, number, number]>('get_absolute_window_rect');
         const otherWindowRect = await invoke<[number, number, number, number]>('get_foreground_window_rect');
 
@@ -87,10 +89,12 @@
 
     watch(isOtherWindowHover, async (newValue) => {
         setBubbleState(!newValue);
+        state.value = newValue ? 'hidden' : 'minimized';
     });
 
     onMounted(() => {
         bubbleOtherWindowCoverIntervalId = setInterval(BubbleOtherWindowCoverInterval, 200);
+        bubbleOtherWindowCoverIntervalId = setInterval(bubbleOtherWindowCoverInterval, 200);
         bubbleMouseEffectId = setInterval(bubbleMouseEffect, 50);
         bubbleMouseHoverIntervalId = setInterval(bubbleMouseHoverInterval, 50);
     });
@@ -113,9 +117,10 @@
 
 <template>
     <div class="center">
-        <div class="bubble " ref="bubble">
-            <BubbleMinimized />
-            <BubbleExpanded />
+        <div class="bubble hidden" ref="bubble">
+                <BubbleHidden class="layer" :class="{'layer-active': state === 'hidden'}" />
+                <BubbleMinimized class="layer" :class="{'layer-active': state === 'minimized'}" />
+                <BubbleExpanded class="layer" :class="{'layer-active': state === 'expanded'}" />
         </div>
     </div>
 
@@ -159,6 +164,23 @@
         width 0.3s var(--anim);
     }
 
+    .layer {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.3s var(--anim), visibility 0.3s var(--anim);
+
+        position: absolute;
+        inset: 0;
+    }
+
+    .layer-active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        position: relative;
+    }
+
     .hidden {
         width: 300px;
         transform: translateY(-99%);
@@ -191,5 +213,14 @@
     *, *::after, *::before {
         box-sizing: border-box;
         user-select: none;
+    }
+    .container {
+        display: flex;
+        position: relative;
+        width: 100%;
+        height: 100%;
+
+        align-items: center;
+        justify-content: center;
     }
 </style>
