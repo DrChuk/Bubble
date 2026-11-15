@@ -91,10 +91,24 @@
         state.value = newValue ? 'hidden' : 'minimized';
     });
 
+    let updateBorderColorId: number | null = null;
+    async function updateBorderColor() {
+        const windowRect = await invoke<[number, number, number, number]>('get_absolute_window_rect');
+        const yPixel = windowRect[1] + 5;
+        const firstPixel = await invoke<[number, number, number]>('get_pixel', {x: windowRect[0] - 20, y: yPixel});
+        const secondPixel = await invoke<[number, number, number]>('get_pixel', {x: windowRect[2] + 20, y: yPixel});
+
+        const firstPixelIsDark = await invoke<boolean>('is_dark', {r: firstPixel[0], g: firstPixel[1], b: firstPixel[2]});
+        const secondPixelIsDark = await invoke<boolean>('is_dark', {r: secondPixel[0], g: secondPixel[1], b: secondPixel[2]});
+
+        bubble.value?.classList.toggle('border', firstPixelIsDark && secondPixelIsDark && state.value === 'hidden');
+    }
+
     onMounted(() => {
         bubbleOtherWindowCoverIntervalId = setInterval(bubbleOtherWindowCoverInterval, 200);
         bubbleMouseEffectId = setInterval(bubbleMouseEffect, 50);
         bubbleMouseHoverIntervalId = setInterval(bubbleMouseHoverInterval, 50);
+        updateBorderColorId = setInterval(updateBorderColor, 100);
     });
 
     onUnmounted(() => {
@@ -109,6 +123,10 @@
         if (bubbleMouseHoverIntervalId !== null) {
             clearInterval(bubbleMouseHoverIntervalId);
             bubbleMouseHoverIntervalId = null;
+        }
+        if (updateBorderColorId !== null) {
+            clearInterval(updateBorderColorId);
+            updateBorderColorId = null;
         }
     });
 </script>
@@ -152,6 +170,7 @@
 
         background-color: black;
         border-radius: 40px;
+        outline: 1px solid transparent;
 
         overflow: hidden;
         
@@ -159,7 +178,12 @@
         --cursor-y: 0px;
 
         transition: transform 0.3s var(--anim),
-        width 0.3s var(--anim);
+        width 0.3s var(--anim),
+        outline 0.3s var(--anim);
+    }
+
+    .bubble.border {
+        outline-color: #333;
     }
 
     .layer {

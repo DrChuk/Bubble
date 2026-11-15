@@ -67,6 +67,34 @@ fn get_foreground_window_rect() -> Option<(i32, i32, i32, i32)> {
 }
 
 #[tauri::command]
+#[cfg(target_os = "windows")]
+fn get_pixel(x: i32, y: i32) -> Option<(u8, u8, u8)> {
+    use windows::Win32::Graphics::Gdi::{GetDC, GetPixel, ReleaseDC};
+    use windows::Win32::Foundation::COLORREF;
+
+    unsafe {
+        let hdc = GetDC(None);
+        if hdc.is_invalid() {
+            return None;
+        }
+        let color: COLORREF = GetPixel(hdc, x, y);
+        let _ = ReleaseDC(None, hdc);
+
+        let r = (color.0 & 0xFF) as u8;
+        let g = ((color.0 >> 8) & 0xFF) as u8;
+        let b = ((color.0 >> 16) & 0xFF) as u8;
+
+        Some((r, g, b))
+    }
+}
+
+#[tauri::command]
+fn is_dark(r: u8, g: u8, b: u8) -> bool {
+    let brightness = (r as u32 * 299 + g as u32 * 587 + b as u32 * 114) / 1000;
+    brightness < 10
+}
+
+#[tauri::command]
 fn rects_intersect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> bool {
     !(a.2 < b.0 || b.2 < a.0 || a.3 < b.1 || b.3 < a.1)
 }
@@ -109,7 +137,9 @@ pub fn run() {
             get_date,
             get_foreground_window_rect,
             rects_intersect,
-            get_absolute_window_rect
+            get_absolute_window_rect,
+            get_pixel,
+            is_dark
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
