@@ -88,12 +88,10 @@
     }
 
     watch(isOtherWindowHover, async (newValue) => {
-        setBubbleState(!newValue);
         state.value = newValue ? 'hidden' : 'minimized';
     });
 
     onMounted(() => {
-        bubbleOtherWindowCoverIntervalId = setInterval(BubbleOtherWindowCoverInterval, 200);
         bubbleOtherWindowCoverIntervalId = setInterval(bubbleOtherWindowCoverInterval, 200);
         bubbleMouseEffectId = setInterval(bubbleMouseEffect, 50);
         bubbleMouseHoverIntervalId = setInterval(bubbleMouseHoverInterval, 50);
