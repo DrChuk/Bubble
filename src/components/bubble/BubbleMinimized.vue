@@ -53,6 +53,7 @@
 
     div {
         width: 100%;
+        max-height: 40px;
     }
     
     .bubble .dot {

@@ -14,8 +14,8 @@
       {
         "title": "bubble",
         "label": "bubble",
-        "width": 340,
-        "height": 60,
+        "width": 490,
+        "height": 380,
         "decorations": false,
         "alwaysOnTop": true,
         "transparent": true,

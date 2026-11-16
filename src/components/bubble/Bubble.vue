@@ -18,6 +18,7 @@
     // A function for fast show/hide a bubble
     watch(state, async (newValue) => {
         bubble.value?.classList.toggle('hidden', newValue === 'hidden');
+        bubble.value?.classList.toggle('expanded', newValue === 'expanded');
         await appWindow.setIgnoreCursorEvents(newValue === 'hidden');
     });
 
@@ -31,9 +32,9 @@
             mouseX >= Number(bubbleRect?.left) && mouseX <= Number(bubbleRect?.right) &&
             mouseY >= Number(bubbleRect?.top) && mouseY <= Number(bubbleRect?.bottom);
 
-        bubble.value?.classList.toggle('hover', isHoverBubble);
+        bubble.value?.classList.toggle('hover', isHoverBubble && state.value !== 'expanded');
 
-        if (isHoverBubble) {
+        if (isHoverBubble && state.value !== 'expanded') {
             bubble.value?.style.setProperty('--cursor-x', `${mouseX}px`);
             bubble.value?.style.setProperty('--cursor-y', `${mouseY}px`);
         }
@@ -42,7 +43,7 @@
     // A function to check whether a Bubble hovered
     let bubbleMouseHoverIntervalId: number | null = null;
     async function bubbleMouseHoverInterval() {
-        if (!isOtherWindowHover.value) return;
+        if (!isOtherWindowHover.value || state.value === 'expanded') return;
         const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
         const bubbleRect = bubble.value?.getBoundingClientRect();
 
@@ -87,8 +88,8 @@
         isOtherWindowHover.value = isIntersect;
     }
 
-    watch(isOtherWindowHover, async (newValue) => {
-        state.value = newValue ? 'hidden' : 'minimized';
+    watch(isOtherWindowHover, (newValue) => {
+        state.value = newValue ? 'hidden' : state.value;
     });
 
     let updateBorderColorId: number | null = null;
@@ -102,6 +103,12 @@
         const secondPixelIsDark = await invoke<boolean>('is_dark', {r: secondPixel[0], g: secondPixel[1], b: secondPixel[2]});
 
         bubble.value?.classList.toggle('border', firstPixelIsDark && secondPixelIsDark && state.value === 'hidden');
+    }
+
+    async function onBubbleClick() {
+        if (state.value === 'minimized') {
+            state.value = 'expanded';
+        }
     }
 
     onMounted(() => {
@@ -133,7 +140,7 @@
 
 <template>
     <div class="center">
-        <div class="bubble hidden" ref="bubble">
+        <div class="bubble hidden" ref="bubble" @click="onBubbleClick">
                 <BubbleHidden class="layer" :class="{'layer-active': state === 'hidden'}" />
                 <BubbleMinimized class="layer" :class="{'layer-active': state === 'minimized'}" />
                 <BubbleExpanded class="layer" :class="{'layer-active': state === 'expanded'}" />
@@ -163,8 +170,9 @@
         justify-content: center;
         align-items: center;
 
-        max-height: 40px;
         width: 320px;
+        height: 40px;
+        max-height: 370px;
 
         margin-top: 8px;
 
@@ -178,7 +186,7 @@
         --cursor-y: 0px;
 
         transition: transform 0.3s var(--anim),
-        width 0.3s var(--anim),
+        width 0.3s var(--anim), height 0.3s var(--anim),
         outline 0.3s var(--anim);
     }
 
@@ -206,6 +214,15 @@
     .hidden {
         width: 300px;
         transform: translateY(-99%);
+    }
+
+    .expanded {
+        width: 480px;
+        height: 370px;
+    }
+
+    .bubble.hover {
+        cursor: pointer;
     }
 
     .bubble::after {
