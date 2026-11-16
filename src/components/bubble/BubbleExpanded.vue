@@ -58,7 +58,7 @@
         filter: blur(100px);
 
         /* transform: translate(calc(50% - var(--cursor-x) * .1), calc(50% - var(--cursor-y) * .1)); */
-        transform: translate(calc((240px - 50%) + (var(--cursor-x) - 240px) * .1),
-            calc((185px - 50%) + (var(--cursor-y) - 185px) * .1));
+        transform: translate(calc((240px - 50%) + (var(--cursor-x) - 240px) * .05),
+            calc((185px - 50%) + (var(--cursor-y) - 185px) * .05));
     }
 </style>
