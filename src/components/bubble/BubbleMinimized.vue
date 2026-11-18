@@ -42,7 +42,6 @@
 </template>
 
 <style scoped>
-
     p {
         position: relative;
         font-family: 'IBM Plex Sans JP', sans-serif;
