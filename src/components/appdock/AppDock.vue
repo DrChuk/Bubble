@@ -10,7 +10,7 @@
             :id="app.id"
             :title="app.title"
             :icon="app.icon"
-            :component="app.compoonent"
+            :component="app.component"
         />
     </div>
 </template>
@@ -19,13 +19,18 @@
     .apps {
         display: flex;
         position: relative;
-        width: 90%;
-        height: 36px;
+        width: auto;
+        height: 40px;
 
         align-self: end;
+        align-items: center;
         margin-bottom: 8px;
+        gap: 8px;
+        padding: 0 2px;
 
-        background-color: lightgray;
-        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(20px);
+        border-radius: 5px;
     }
 </style>

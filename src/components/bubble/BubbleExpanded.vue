@@ -16,5 +16,11 @@
 
         width: 480px;
         height: 370px;
+
+        background: linear-gradient(
+            45deg,
+            #222,
+            #000
+        );
     }
 </style>
