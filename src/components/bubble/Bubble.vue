@@ -43,7 +43,7 @@
     // A function to check whether a Bubble hovered
     let bubbleMouseHoverIntervalId: number | null = null;
     async function bubbleMouseHoverInterval() {
-        if (!isOtherWindowHover.value || state.value === 'expanded') return;
+        if (state.value === 'expanded') return;
         const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
         const bubbleRect = bubble.value?.getBoundingClientRect();
 
@@ -61,6 +61,7 @@
     // A function to check whether a Bubble is overlapped by window
     let bubbleOtherWindowCoverIntervalId: number | null = null;
     async function bubbleOtherWindowCoverInterval() {
+        if (state.value === 'expanded') return;
         const windowRect = await invoke<[number, number, number, number]>('get_absolute_window_rect');
         const otherWindowRect = await invoke<[number, number, number, number]>('get_foreground_window_rect');
 

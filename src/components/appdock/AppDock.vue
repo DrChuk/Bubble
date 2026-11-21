@@ -22,7 +22,6 @@
         width: auto;
         height: 40px;
 
-        align-self: end;
         align-items: center;
         margin-bottom: 8px;
         gap: 8px;
