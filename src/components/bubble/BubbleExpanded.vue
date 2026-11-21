@@ -1,32 +1,47 @@
 <script setup lang="ts">
-    import { invoke } from '@tauri-apps/api/core';
-    import { ref, onMounted, onUnmounted } from "vue";
+    import { useBubbleState } from "../../composables/useBubbleState";
+    import { invoke } from "@tauri-apps/api/core";
+    import { onMounted, onUnmounted, ref } from "vue";
 
-    const container = ref<HTMLDivElement | null>(null);
+    const { state } = useBubbleState();
+    const minimizeBtn = ref<HTMLButtonElement | null>(null);
 
-    let mouseEffectIntervalId: number | null = null;
-    async function mouseEffectInterval() {
-        let [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
+    let onMouseHoverId: number | null = null;
+    async function onMouseHover() {
+        const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
+        const rect = minimizeBtn.value?.getBoundingClientRect();
 
-        container.value?.style.setProperty("--cursor-x", `${mouseX}px`);
-        container.value?.style.setProperty("--cursor-y", `${mouseY}px`);
+        const isHover = 
+            mouseX >= Number(rect?.left) && mouseX <= Number(rect?.right) &&
+            mouseY >= Number(rect?.top) && mouseY <= Number(rect?.bottom);
+
+        minimizeBtn.value?.classList.toggle('hover', isHover);
+    }
+
+    function onMinimizeClick() {
+        state.value = 'minimized';
     }
 
     onMounted(() => {
-        mouseEffectIntervalId = setInterval(mouseEffectInterval, 50);
-    }); 
+        onMouseHoverId = setInterval(onMouseHover, 50);
+    })
 
     onUnmounted(() => {
-        if (mouseEffectIntervalId !== null) {
-            clearInterval(mouseEffectIntervalId);
-            mouseEffectIntervalId = null;
+        if (onMouseHoverId !== null) {
+            clearInterval(onMouseHoverId);
+            onMouseHoverId = null;
         }
-    })
+    });
 </script>
 
 <template>
-    <div class="container" ref="container">
-        
+    <div class="container">
+        <div class="center">
+            <button class="minimize" @click.stop="onMinimizeClick">
+                <span class="icon"></span>
+            </button>
+        </div>
+        <div class="empty"></div>
     </div>
 </template>
 
@@ -35,30 +50,68 @@
         display: flex;
         position: relative;
 
+        flex-direction: column;
+        justify-content: center;
+
         width: 480px;
         height: 370px;
 
         overflow: hidden;
 
-        --cursor-x: 0px;
-        --cursor-y: 0px;
+        background: linear-gradient(
+            45deg,
+            #222,
+            #000
+        );
     }
 
-    .container::after {
-        content: "";
-        position: absolute;
+    .empty {
+        width: 100%;
+        height: 100%;
+    }
 
-        top: 0;
-        left: 0;
+    .center {
+        display: flex;
+        position: relative;
 
-        width: 100px;
-        height: 100px;
+        width: 100%;
+        height: auto;
+
+        justify-content: center;
+        padding-top: 8px;
+    }
+    
+    .minimize {
+        display: flex;
+        position: relative;
+ 
+        width: 36px;
+        height: 36px;
+
+        background-color: transparent;
+
+        border: none;
+        border-radius: 36px;
+
+        transition: background-color 0.3s var(--anim);
+    }
+
+    .minimize:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+    }
+
+    .minimize .icon {
+        position: relative;
+
+        width: 36px;
+        height: 36px;
+
         background-color: white;
-        border-radius: 100px;
-        filter: blur(100px);
 
-        /* transform: translate(calc(50% - var(--cursor-x) * .1), calc(50% - var(--cursor-y) * .1)); */
-        transform: translate(calc((240px - 50%) + (var(--cursor-x) - 240px) * .05),
-            calc((185px - 50%) + (var(--cursor-y) - 185px) * .05));
+        mask: url("../../assets/chevron-up.svg");
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
     }
 </style>
