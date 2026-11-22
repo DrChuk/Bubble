@@ -9,6 +9,11 @@
     "core:default",
     "opener:default",
     "core:window:allow-set-ignore-cursor-events",
-    "fs:default"
+    "core:window:allow-set-focus",
+    "core:window:allow-hide",
+    "core:window:allow-show",
+    "fs:default",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister"
   ]
 }
