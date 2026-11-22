@@ -186,8 +186,8 @@
         --cursor-x: 0px;
         --cursor-y: 0px;
 
-        transition: transform 0.3s var(--anim),
-        width 0.3s var(--anim), height 0.3s var(--anim),
+        transition: transform 0.35s var(--bubble-anim),
+        width 0.35s var(--bubble-anim), height 0.35s var(--bubble-anim),
         outline 0.3s var(--anim);
     }
 
@@ -213,7 +213,7 @@
     }
 
     .hidden {
-        width: 300px;
+        width: 200px;
         transform: translateY(-99%);
     }
 

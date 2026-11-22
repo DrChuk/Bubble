@@ -99,15 +99,3 @@
         color: white;
     }
 </style>
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap');
-
-    :root {
-        --anim: cubic-bezier(.11,.58,.3,.99);
-    }
-
-    body {
-        margin: 0;
-    }
-</style>

@@ -30,3 +30,16 @@
 <template>
     <Bubble />
 </template>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap');
+
+    :root {
+        --bubble-anim: cubic-bezier(0.3, -0.2, 0, 1.25);
+        --anim: cubic-bezier(.11,.58,.3,.99);
+    }
+
+    body {
+        margin: 0;
+    }
+</style>
