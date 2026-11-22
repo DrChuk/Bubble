@@ -24,11 +24,9 @@
         align-items: center;
         margin-bottom: 8px;
         gap: 8px;
-        padding: 0 2px;
+        padding: 0 4px;
 
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(20px);
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 5px;
     }
 </style>

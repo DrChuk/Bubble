@@ -92,15 +92,16 @@
         height: 32px;
         border-radius: 5px;
 
-        background-color: rgba(255, 255, 255, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(20px);
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
 
+        transform: translateZ(0);
         transition: transform 0.3s var(--anim);
     }
 
     .background.hover:not(.active) {
-        transform: translateY(-10%) scale(120%, 120%);
+        will-change: transform;
+        transform: translateZ(0) translateY(-10%) scale(120%, 120%);
     }
 
     .background::after {
