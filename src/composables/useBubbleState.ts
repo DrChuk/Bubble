@@ -11,8 +11,7 @@ export function useBubbleState() {
     // }
     //
     // function hide() { setState('hidden') }
-    // function minimize() { setState('minimized') }
-    // function expand() { setState('expanded') }
+    // function minimize() { setState('minimized') } function expand() { setState('expanded') }
     
     // return { state, setState, hide, minimize, expand }
     return { state }
