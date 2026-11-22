@@ -3,6 +3,7 @@
     import { useBubbleState } from "../../composables/useBubbleState";
     import { invoke } from "@tauri-apps/api/core";
     import { onMounted, onUnmounted, ref } from "vue";
+    import { useMenuRegistry } from "../../composables/useMenuRegistry";
 
     const { state } = useBubbleState();
     const minimizeBtn = ref<HTMLButtonElement | null>(null);
@@ -23,6 +24,8 @@
         state.value = 'minimized';
     }
 
+    const {activeApp} = useMenuRegistry();
+
     onMounted(() => {
         onMouseHoverId = setInterval(onMouseHover, 50);
     })
@@ -42,7 +45,9 @@
                 <span class="icon"></span>
             </button>
         </div>
-        <div class="empty"></div>
+        <div class="appcard">
+            <component :is="activeApp?.component" v-if="activeApp"></component>
+        </div>
        <AppDock />
     </div>
 </template>
@@ -67,7 +72,7 @@
         );
     }
 
-    .empty {
+    .appcard {
         width: 100%;
         height: 100%;
     }

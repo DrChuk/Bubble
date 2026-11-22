@@ -10,7 +10,6 @@
             :id="app.id"
             :title="app.title"
             :icon="app.icon"
-            :component="app.component"
         />
     </div>
 </template>
@@ -20,7 +19,7 @@
         display: flex;
         position: relative;
         width: auto;
-        height: 40px;
+        height: 48px;
 
         align-items: center;
         margin-bottom: 8px;

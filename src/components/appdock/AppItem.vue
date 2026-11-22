@@ -1,12 +1,12 @@
 <script setup lang="ts">
     import { invoke } from '@tauri-apps/api/core';
     import { onMounted, onUnmounted, ref } from 'vue';
+    import { useMenuRegistry } from '../../composables/useMenuRegistry';
 
     const props = defineProps<{
         id: string,
         title: string,
         icon: string,
-        component: string
     }>();
 
     const appItemRef = ref<HTMLDivElement | null>(null);
@@ -23,8 +23,21 @@
         appItemRef.value?.classList.toggle('hover', isHoverAppItem);
     }
 
+    const {setActive, activeId} = useMenuRegistry();
+
+    let isActiveAppId: number | null = null;
+
+    function isActiveApp() {
+        appItemRef.value?.classList.toggle('active', activeId.value === props.id);
+    }
+
+   function onClick() {
+        setActive(props.id);
+    }
+
     onMounted(() => {
         hoverIntervalId = setInterval(hoverInterval, 50);
+        isActiveAppId = setInterval(isActiveApp, 50);
     })
 
     onUnmounted(() => {
@@ -32,11 +45,15 @@
             clearInterval(hoverIntervalId);
             hoverIntervalId = null;
         }
+        if (isActiveAppId !== null) {
+            clearInterval(isActiveAppId);
+            isActiveAppId = null;
+        }
     })
 </script>
 
 <template>
-    <div class="background" ref="appItemRef">
+    <div class="background" ref="appItemRef" @click="onClick">
         <span
             class="icon"
             :style="{
@@ -82,7 +99,27 @@
         transition: transform 0.3s var(--anim);
     }
 
-    .background.hover {
+    .background.hover:not(.active) {
         transform: translateY(-10%) scale(120%, 120%);
+    }
+
+    .background::after {
+        content: "";
+        position: absolute;
+
+        width: 4px;
+        height: 4px;
+        bottom: -30%;
+        left: 50%;
+
+        border-radius: 4px;
+
+        background-color: transparent;
+        transform: translateX(-50%);
+        transition: background-color 0.3s var(--anim);
+    }
+
+    .background.active::after {
+        background-color: white;
     }
 </style>
