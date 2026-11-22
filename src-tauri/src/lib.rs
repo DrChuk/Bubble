@@ -2,6 +2,8 @@ use chrono::Local;
 use tauri::{Manager, WebviewWindow, Window};
 use tauri_plugin_positioner::{Position, WindowExt};
 
+mod config;
+
 #[tauri::command]
 fn get_mouse_pos(window: WebviewWindow) -> Result<(f64, f64), String> {
     let mouse = window.cursor_position().map_err(|e| e.to_string())?;
@@ -144,7 +146,9 @@ pub fn run() {
             rects_intersect,
             get_absolute_window_rect,
             get_pixel,
-            is_dark
+            is_dark,
+            config::load_config,
+            config::save_config
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
