@@ -1,5 +1,5 @@
-use tauri::{Manager, WebviewWindow, Window};
 use chrono::Local;
+use tauri::{Manager, WebviewWindow, Window};
 use tauri_plugin_positioner::{Position, WindowExt};
 
 #[tauri::command]
@@ -69,8 +69,8 @@ fn get_foreground_window_rect() -> Option<(i32, i32, i32, i32)> {
 #[tauri::command]
 #[cfg(target_os = "windows")]
 fn get_pixel(x: i32, y: i32) -> Option<(u8, u8, u8)> {
-    use windows::Win32::Graphics::Gdi::{GetDC, GetPixel, ReleaseDC};
     use windows::Win32::Foundation::COLORREF;
+    use windows::Win32::Graphics::Gdi::{GetDC, GetPixel, ReleaseDC};
 
     unsafe {
         let hdc = GetDC(None);
@@ -123,10 +123,15 @@ pub fn run() {
                 let _ = window_clone.move_window(Position::TopCenter);
                 let _ = window_clone.show();
 
-                #[cfg(debug_assertions)] {
+                #[cfg(debug_assertions)]
+                {
                     let _ = window_clone.open_devtools();
                 }
             });
+
+            #[cfg(desktop)] {
+                app.handle().plugin(tauri_plugin_global_shortcut::Builder::new().build())?;
+            }
 
             Ok(())
         })

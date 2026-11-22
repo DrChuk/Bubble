@@ -9,6 +9,7 @@
     "core:default",
     "opener:default",
     "core:window:allow-set-ignore-cursor-events",
-    "fs:default"
+    "fs:default",
+    "global-shortcut:allow-register"
   ]
 }
