@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 todo.md
+src-tauri/src/bubble-pro/
 errors/
