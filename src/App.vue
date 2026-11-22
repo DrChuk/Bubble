@@ -3,17 +3,16 @@
     import { register, unregister } from '@tauri-apps/plugin-global-shortcut';
     import { useBubbleState } from './composables/useBubbleState';
     import { onMounted, onUnmounted } from 'vue';
+    import { getCurrentWindow } from '@tauri-apps/api/window';
+
+    const appWindow = getCurrentWindow();
 
     const { expand, hide, state } = useBubbleState();
 
-    // await register('Super+Alt+Q', (event) => {
-    //     if (event.state === 'Pressed') {
-    //         expand();
-    //     }
-    // });
     onMounted(async () => {
         await register('Super+Alt+Q', (event) => {
             if (event.state === 'Pressed') {
+                if (state.value === 'hidden') appWindow.setFocus();
                 state.value === 'expanded' ? hide() : expand();
             }
         });
