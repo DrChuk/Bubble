@@ -60,8 +60,8 @@
         flex-direction: column;
         justify-content: center;
 
-        width: 480px;
-        height: 370px;
+        width: 100%;
+        height: 100%;
 
         overflow: hidden;
 
