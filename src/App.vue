@@ -35,7 +35,7 @@
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap');
 
     :root {
-        --bubble-anim: cubic-bezier(0.3, -0.2, 0, 1.25);
+        --bubble-anim: cubic-bezier(0.35,1.3,0.64,1);
         --anim: cubic-bezier(.11,.58,.3,.99);
     }
 
