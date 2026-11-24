@@ -4,7 +4,12 @@
 
 <template>
     <div class="card">
-        <span class="circle-timer"></span>
+        <div class="timer">
+            <div class="square">
+                <h1>19:00</h1>
+                <p>Timer</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -12,6 +17,10 @@
     .card {
         display: flex;
         position: relative;
+
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
 
         width: 95%;
         height: 95%;
@@ -43,5 +52,45 @@
             linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
+    }
+
+    .timer {
+        display: flex;
+        position: relative;
+
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .square {
+        display: flex;
+        position: relative;
+
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        width: 192px;
+        height: 192px;
+
+        outline: 4px solid white;
+        border-radius: 50px;
+    }
+
+    h1 {
+        margin: 0;
+        font-family: 'Copse', serif;
+        font-size: 64px;
+        font-weight: 100;
+
+        color: white;
+    }
+
+    p {
+        margin: 0;
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-size: 18px;
+        color: #BBB;
     }
 </style>
