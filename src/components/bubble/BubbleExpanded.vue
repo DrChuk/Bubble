@@ -1,47 +1,21 @@
 <script setup lang="ts">
     import AppDock from "./../appdock/AppDock.vue";
     import { useBubbleState } from "../../composables/useBubbleState";
-    import { invoke } from "@tauri-apps/api/core";
-    import { onMounted, onUnmounted, ref } from "vue";
     import { useMenuRegistry } from "../../composables/useMenuRegistry";
 
-    const { state } = useBubbleState();
-    const minimizeBtn = ref<HTMLButtonElement | null>(null);
-
-    let onMouseHoverId: number | null = null;
-    async function onMouseHover() {
-        const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
-        const rect = minimizeBtn.value?.getBoundingClientRect();
-
-        const isHover = 
-            mouseX >= Number(rect?.left) && mouseX <= Number(rect?.right) &&
-            mouseY >= Number(rect?.top) && mouseY <= Number(rect?.bottom);
-
-        minimizeBtn.value?.classList.toggle('hover', isHover);
-    }
+    const { minimize } = useBubbleState();
 
     function onMinimizeClick() {
-        state.value = 'minimized';
+        minimize();
     }
 
     const {activeApp} = useMenuRegistry();
-
-    onMounted(() => {
-        onMouseHoverId = setInterval(onMouseHover, 50);
-    })
-
-    onUnmounted(() => {
-        if (onMouseHoverId !== null) {
-            clearInterval(onMouseHoverId);
-            onMouseHoverId = null;
-        }
-    });
 </script>
 
 <template>
     <div class="container">
         <div class="center">
-            <button class="minimize" @click.stop="onMinimizeClick">
+            <button class="minimize"  @click.stop="onMinimizeClick">
                 <span class="icon"></span>
             </button>
         </div>

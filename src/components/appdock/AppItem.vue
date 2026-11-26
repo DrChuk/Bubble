@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import { invoke } from '@tauri-apps/api/core';
     import { onMounted, onUnmounted, ref } from 'vue';
     import { useMenuRegistry } from '../../composables/useMenuRegistry';
 
@@ -10,18 +9,6 @@
     }>();
 
     const appItemRef = ref<HTMLDivElement | null>(null);
-
-    let hoverIntervalId: number | null = null;
-    async function hoverInterval() {
-        const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
-        const appItemRect = appItemRef.value?.getBoundingClientRect();
-
-        const isHoverAppItem = 
-            mouseX >= Number(appItemRect?.left) && mouseX <= Number(appItemRect?.right) &&
-            mouseY >= Number(appItemRect?.top) && mouseY <= Number(appItemRect?.bottom);
-
-        appItemRef.value?.classList.toggle('hover', isHoverAppItem);
-    }
 
     const {setActive, activeId} = useMenuRegistry();
 
@@ -36,15 +23,10 @@
     }
 
     onMounted(() => {
-        hoverIntervalId = setInterval(hoverInterval, 50);
         isActiveAppId = setInterval(isActiveApp, 50);
     })
 
     onUnmounted(() => {
-        if (hoverIntervalId !== null) {
-            clearInterval(hoverIntervalId);
-            hoverIntervalId = null;
-        }
         if (isActiveAppId !== null) {
             clearInterval(isActiveAppId);
             isActiveAppId = null;
@@ -53,7 +35,7 @@
 </script>
 
 <template>
-    <div class="background" ref="appItemRef" @click="onClick">
+    <div class="background" v-hover-zone="`background-${props.id}`" ref="appItemRef" @click="onClick">
         <span
             class="icon"
             :style="{

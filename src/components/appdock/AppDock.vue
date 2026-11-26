@@ -8,6 +8,7 @@
         <AppItem 
             v-for="app in APPS"
             :id="app.id"
+            :key="app.id"
             :title="app.title"
             :icon="app.icon"
         />
