@@ -1,12 +1,14 @@
 <script setup lang="ts">
+    import { useTimer } from '../../../../composables/useTimer';
 
+    const timer = useTimer(10);
 </script>
 
 <template>
     <div class="card">
         <div class="timer">
             <div class="square">
-                <h1>19:00</h1>
+                <h1>{{ timer.returnString() }}</h1>
                 <p>Timer</p>
             </div>
         </div>
