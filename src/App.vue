@@ -33,7 +33,7 @@
 
 <style>
     @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Copse');
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand');
 
     :root {
         --bubble-anim: cubic-bezier(0.3, -0.2, 0, 1.25);

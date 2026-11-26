@@ -80,16 +80,17 @@
 
     h1 {
         margin: 0;
-        font-family: 'Copse', serif;
+        font-family: 'Quicksand', serif;
         font-size: 64px;
-        font-weight: 100;
+        font-weight: 900;
 
         color: white;
     }
 
     p {
         margin: 0;
-        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: 'Quicksand', sans-serif;
+        font-weight: 600;
         font-size: 18px;
         color: #BBB;
     }
