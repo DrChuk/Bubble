@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import App from "./App.vue";
+import { vHoverZone } from "./directives/vHoverZone";
 
 document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -23,4 +24,8 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-createApp(App).mount("#app");
+const app = createApp(App)
+
+app.directive("hover-zone", vHoverZone);
+
+app.mount("#app");

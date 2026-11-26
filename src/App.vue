@@ -5,11 +5,21 @@
     import { onMounted, onUnmounted } from 'vue';
     import { getCurrentWindow } from '@tauri-apps/api/window';
     import { useConfig } from './composables/useConfig';
+    import { useHoverZones } from './composables/useHoverZones';
+    import { invoke } from '@tauri-apps/api/core';
 
     const appWindow = getCurrentWindow();
     const {config, loadConfig} = useConfig();
 
     const { expand, hide, state } = useBubbleState();
+    const { updateHover } = useHoverZones();
+
+    let mouseIntervalId: number | null = null;
+    async function mouseInterval() {
+        const [mouseX, mouseY] = await invoke<[number, number]>('get_mouse_pos');
+
+        updateHover(mouseX, mouseY);
+    }
 
     onMounted(async () => {
         await loadConfig();
@@ -20,10 +30,17 @@
                 state.value === 'expanded' ? hide() : expand();
             }
         });
+
+        mouseIntervalId = setInterval(mouseInterval, 50);
     });
 
     onUnmounted(async () => {
         await unregister(config.value.hotkey);
+
+        if (mouseIntervalId !== null) {
+            clearInterval(mouseIntervalId);
+            mouseIntervalId = null;
+        }
     });
 </script>
 
